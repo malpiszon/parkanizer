@@ -12,19 +12,22 @@ if not path.isfile(spotsLeftPath):
     f.write("0")
     f.close()
 
-response = requests.get(url)
-parkings = json.loads(response.text)
+try:
+    response = requests.get(url)
+    parkings = json.loads(response.text)
+except:
+    sys.exit(1)
 
-for parking in parkings['parkingLots']:
-    if parking['id'] == 'obc-plac-f':
-        f = open(spotsLeftPath, "r")
-        previousSpotsLeft = f.read()
-        f.close()
-        currentSpotsLeft = parking['startedPriceTables'][0]['spotsLeft']
-        if int(previousSpotsLeft) != int(currentSpotsLeft) and int(currentSpotsLeft) != 0:
-            f = open(spotsLeftPath, "w")
-            f.write(str(currentSpotsLeft))
-            currentPrice = parking['startedPriceTables'][0]['price']
-            print('Wolnych miejsc: ' + str(currentSpotsLeft) + ' w cenie: ' + str(currentPrice) + '. Link: https://go.parkanizer.com/#/offers')
-
-
+if len(parkings) > 0:
+    for parking in parkings['parkingLots']:
+        if parking['id'] == 'obc-plac-f':
+            f = open(spotsLeftPath, "r")
+            previousSpotsLeft = f.read()
+            f.close()
+            currentSpotsLeft = parking['startedPriceTables'][0]['spotsLeft']
+            if int(previousSpotsLeft) != int(currentSpotsLeft) and int(currentSpotsLeft) != 0:
+                f = open(spotsLeftPath, "w")
+                f.write(str(currentSpotsLeft))
+                f.close()
+                currentPrice = parking['startedPriceTables'][0]['price']
+                print('Wolnych miejsc: ' + str(currentSpotsLeft) + ' w cenie: ' + str(currentPrice) + '. Link: https://go.parkanizer.com/#/offers')
